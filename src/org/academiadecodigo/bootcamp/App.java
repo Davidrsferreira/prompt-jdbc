@@ -5,6 +5,7 @@ import org.academiadecodigo.bootcamp.controller.MainController;
 import org.academiadecodigo.bootcamp.controller.UserDetailsController;
 import org.academiadecodigo.bootcamp.controller.UserListController;
 import org.academiadecodigo.bootcamp.model.User;
+import org.academiadecodigo.bootcamp.service.JdbcUserService;
 import org.academiadecodigo.bootcamp.service.MockUserService;
 import org.academiadecodigo.bootcamp.service.UserService;
 import org.academiadecodigo.bootcamp.utils.Security;
@@ -26,14 +27,9 @@ public class App {
         UserDetailsController userDetailsController = new UserDetailsController();
         UserDetailsView userDetailsView = new UserDetailsView();
         Prompt prompt = new Prompt(System.in, System.out);
-
-        UserService userService = new MockUserService();
-        userService.add(new User("rui", "ferrao@academiadecodigo.org", Security.getHash("academiadecodigo"),
-                "Rui", "Ferrão", "912345678"));
-        userService.add(new User("faustino", "faustino@academiadecodigo.org", Security.getHash("academiadecodigo"),
-                "João", "Faustino", "966666666"));
-        userService.add(new User("audrey", "audrey@academiadecodigo.org", Security.getHash("academiadecodigo"),
-                "Audrey", "Lopes", "934567890"));
+        
+        UserService userService = new JdbcUserService();
+        System.out.println(userService.count());
 
         // Wire login controller and view
         loginView.setPrompt(prompt);
