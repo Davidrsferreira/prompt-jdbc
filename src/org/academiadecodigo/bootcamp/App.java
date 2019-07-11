@@ -4,15 +4,15 @@ import org.academiadecodigo.bootcamp.controller.LoginController;
 import org.academiadecodigo.bootcamp.controller.MainController;
 import org.academiadecodigo.bootcamp.controller.UserDetailsController;
 import org.academiadecodigo.bootcamp.controller.UserListController;
-import org.academiadecodigo.bootcamp.model.User;
+import org.academiadecodigo.bootcamp.persistence.ConnectionManager;
 import org.academiadecodigo.bootcamp.service.JdbcUserService;
-import org.academiadecodigo.bootcamp.service.MockUserService;
 import org.academiadecodigo.bootcamp.service.UserService;
-import org.academiadecodigo.bootcamp.utils.Security;
 import org.academiadecodigo.bootcamp.view.LoginView;
 import org.academiadecodigo.bootcamp.view.MainView;
 import org.academiadecodigo.bootcamp.view.UserDetailsView;
 import org.academiadecodigo.bootcamp.view.UserListView;
+
+import java.sql.SQLException;
 
 public class App {
 
@@ -27,9 +27,8 @@ public class App {
         UserDetailsController userDetailsController = new UserDetailsController();
         UserDetailsView userDetailsView = new UserDetailsView();
         Prompt prompt = new Prompt(System.in, System.out);
-        
+
         UserService userService = new JdbcUserService();
-        System.out.println(userService.count());
 
         // Wire login controller and view
         loginView.setPrompt(prompt);
@@ -60,6 +59,12 @@ public class App {
 
         // Start APP
         loginController.init();
+
+        try {
+            ConnectionManager.getConnection().close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 }
