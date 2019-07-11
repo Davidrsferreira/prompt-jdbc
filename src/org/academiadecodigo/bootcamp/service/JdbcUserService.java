@@ -4,6 +4,7 @@ import org.academiadecodigo.bootcamp.model.User;
 import org.academiadecodigo.bootcamp.persistence.ConnectionManager;
 import org.academiadecodigo.bootcamp.utils.Security;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -15,18 +16,20 @@ public class JdbcUserService implements UserService {
     @Override
     public boolean authenticate(String username, String password) {
 
-        String query = "SELECT * FROM users WHERE user_name = '" + username + "'";
+        String query = "SELECT * FROM users WHERE user_name=?";
+
+        PreparedStatement statement = null;
 
         ResultSet resultSet;
 
         User user = new User();
 
-        Statement statement = null;
-
         try {
 
-            statement = ConnectionManager.getConnection().createStatement();
-            resultSet = statement.executeQuery(query);
+            statement = ConnectionManager.getConnection().prepareStatement(query);
+            statement.setString(1, username);
+
+            resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
 
@@ -54,20 +57,21 @@ public class JdbcUserService implements UserService {
     @Override
     public void add(User user) {
 
-        String query = "INSERT INTO users VALUES (\""
-                + user.getUsername() + "\", \""
-                + user.getEmail() + "\", \""
-                + user.getPassword() + "\", \""
-                + user.getFirstName() + "\", \""
-                + user.getLastName() + "\", \""
-                + user.getPhone()+ "\")";
+        String query = "INSERT INTO users VALUES(?, ?, ?, ?, ?, ?)";
 
-        Statement statement = null;
+        PreparedStatement statement = null;
 
         try {
 
-            statement = ConnectionManager.getConnection().createStatement();
-            statement.executeUpdate(query);
+            statement = ConnectionManager.getConnection().prepareStatement(query);
+            statement.setString(1, user.getUsername());
+            statement.setString(2, user.getEmail());
+            statement.setString(3, user.getPassword());
+            statement.setString(4, user.getFirstName());
+            statement.setString(5, user.getLastName());
+            statement.setString(6, user.getPhone());
+
+            statement.executeUpdate();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -82,20 +86,22 @@ public class JdbcUserService implements UserService {
     }
 
     @Override
-    public User findByName(String username) {
+    public User findByName(String userName) {
 
-        String query = "SELECT * FROM users WHERE user_name = '" + username + "'";
+        String query = "SELECT * FROM users WHERE user_name = ?";
 
         ResultSet resultSet;
 
         User user = new User();
 
-        Statement statement = null;
+        PreparedStatement statement = null;
 
         try {
 
-            statement = ConnectionManager.getConnection().createStatement();
-            resultSet = statement.executeQuery(query);
+            statement = ConnectionManager.getConnection().prepareStatement(query);
+            statement.setString(1, userName);
+
+            resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
                 user.setUsername(resultSet.getString("user_name"));
@@ -127,12 +133,12 @@ public class JdbcUserService implements UserService {
 
         LinkedList<User> users = new LinkedList<>();
 
-        Statement statement = null;
+        PreparedStatement statement = null;
 
         try {
 
-            statement = ConnectionManager.getConnection().createStatement();
-            resultSet = statement.executeQuery(query);
+            statement = ConnectionManager.getConnection().prepareStatement(query);
+            resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
 
@@ -169,12 +175,12 @@ public class JdbcUserService implements UserService {
 
         ResultSet resultSet;
 
-        Statement statement = null;
+        PreparedStatement statement = null;
 
         try {
 
-            statement = ConnectionManager.getConnection().createStatement();
-            resultSet = statement.executeQuery(query);
+            statement = ConnectionManager.getConnection().prepareStatement(query);
+            resultSet = statement.executeQuery();
 
             // get the results
             if (resultSet.next()) {
