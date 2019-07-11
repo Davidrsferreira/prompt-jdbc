@@ -21,14 +21,16 @@ public class JdbcUserService implements UserService {
 
         User user = new User();
 
+        Statement statement = null;
+
         try {
 
-            Statement statement = ConnectionManager.getConnection().createStatement();
+            statement = ConnectionManager.getConnection().createStatement();
             resultSet = statement.executeQuery(query);
 
             if (resultSet.next()) {
 
-                user.setPassword(resultSet.getString(3));
+                user.setPassword(resultSet.getString("password"));
 
                 if (user.getPassword().equals(Security.getHash(password))){
                     return true;
@@ -37,6 +39,12 @@ public class JdbcUserService implements UserService {
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
         return false;
@@ -54,13 +62,21 @@ public class JdbcUserService implements UserService {
                 + user.getLastName() + "\", \""
                 + user.getPhone()+ "\")";
 
+        Statement statement = null;
+
         try {
 
-            Statement statement = ConnectionManager.getConnection().createStatement();
+            statement = ConnectionManager.getConnection().createStatement();
             statement.executeUpdate(query);
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
     }
@@ -74,21 +90,29 @@ public class JdbcUserService implements UserService {
 
         User user = new User();
 
+        Statement statement = null;
+
         try {
 
-            Statement statement = ConnectionManager.getConnection().createStatement();
+            statement = ConnectionManager.getConnection().createStatement();
             resultSet = statement.executeQuery(query);
 
             if (resultSet.next()) {
-                user.setUsername(resultSet.getString(1));
-                user.setEmail(resultSet.getString(2));
-                user.setFirstName(resultSet.getString(4));
-                user.setLastName(resultSet.getString(5));
-                user.setPhone(resultSet.getString(6));
+                user.setUsername(resultSet.getString("user_name"));
+                user.setEmail(resultSet.getString("email"));
+                user.setFirstName(resultSet.getString("first_name"));
+                user.setLastName(resultSet.getString("last_name"));
+                user.setPhone(resultSet.getString("phone"));
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
         return user;
@@ -103,27 +127,34 @@ public class JdbcUserService implements UserService {
 
         LinkedList<User> users = new LinkedList<>();
 
+        Statement statement = null;
+
         try {
 
-            Statement statement = ConnectionManager.getConnection().createStatement();
+            statement = ConnectionManager.getConnection().createStatement();
             resultSet = statement.executeQuery(query);
 
             while (resultSet.next()) {
 
                 User user = new User();
 
-                user.setUsername(resultSet.getString(1));
-                user.setEmail(resultSet.getString(2));
-                user.setPassword(resultSet.getString(3));
-                user.setFirstName(resultSet.getString(4));
-                user.setLastName(resultSet.getString(5));
-                user.setPhone(resultSet.getString(6));
+                user.setUsername(resultSet.getString("user_name"));
+                user.setEmail(resultSet.getString("email"));
+                user.setFirstName(resultSet.getString("first_name"));
+                user.setLastName(resultSet.getString("last_name"));
+                user.setPhone(resultSet.getString("phone"));
 
                 users.add(user);
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
         return users;
@@ -138,18 +169,26 @@ public class JdbcUserService implements UserService {
 
         ResultSet resultSet;
 
+        Statement statement = null;
+
         try {
 
-            Statement statement = ConnectionManager.getConnection().createStatement();
+            statement = ConnectionManager.getConnection().createStatement();
             resultSet = statement.executeQuery(query);
 
             // get the results
             if (resultSet.next()) {
-                result = resultSet.getInt(1);
+                result = resultSet.getInt("user_name");
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
         return result;
